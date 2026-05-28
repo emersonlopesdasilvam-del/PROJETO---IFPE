@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEI — Checklist de Pagamento IFPE</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.9.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;font-size:13px;background:#e8eaed;height:100vh;overflow:hidden}
+
+:root{
+  --bl:#003578;--bm:#004A9F;--bl2:#E8F0FB;
+  --border:#cdd1d8;--bg:#f0f2f5;--wh:#fff;
+  --tx:#2c3e50;--mu:#6c757d;
+  --ok:#1a7a3c;--ok-bg:#e8f5ec;--ok-bd:#a5d6b3;
+  --wa:#8a6200;--wa-bg:#fff8e6;--wa-bd:#e0c060;
+  --er:#7a1a1a;--er-bg:#fdecea;--er-bd:#f5b7b1;
+  --inf:#0d5aa7;--inf-bg:#e8f0fb;--inf-bd:#b0c8f0;
+}
+
+/* LAYOUT */
+.shell{display:flex;flex-direction:column;height:100vh;background:var(--bg);overflow:hidden}
+
+/* HEADER */
+.hdr{background:var(--bl);display:flex;align-items:center;padding:0 14px;height:46px;gap:14px;flex-shrink:0}
+.hdr-badge{background:#fff;color:var(--bl);font-size:11px;font-weight:bold;padding:2px 7px;border-radius:2px;letter-spacing:1px}
+.hdr-title{color:rgba(255,255,255,.82);font-size:12px}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:14px;color:rgba(255,255,255,.7);font-size:11px}
+.hdr-user{display:flex;align-items:center;gap:5px;color:#fff;font-size:12px}
+
+/* TOOLBAR */
+.toolbar{background:var(--wh);border-bottom:1px solid var(--border);padding:6px 14px;display:flex;align-items:center;gap:5px;flex-shrink:0}
+.proc-num{font-size:12px;color:var(--bm);font-weight:bold;white-space:nowrap}
+.sep{width:1px;height:20px;background:var(--border);margin:0 4px}
+.proc-type{font-size:11px;color:var(--mu)}
+.tb-btn{background:none;border:1px solid var(--border);border-radius:2px;padding:4px 9px;font-size:11px;color:var(--tx);cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.tb-btn:hover{background:var(--bl2);border-color:var(--bm);color:var(--bm)}
+.tb-btn.act{background:var(--bm);color:#fff;border-color:var(--bm)}
+.tb-btn.act:hover{background:var(--bl)}
+.tb-btn i{font-size:13px}
+
+/* BODY */
+.body{display:flex;flex:1;overflow:hidden}
+
+/* LEFT SIDEBAR — doc tree */
+.lsb{width:210px;background:var(--wh);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.lsb-hd{background:#f7f8fa;border-bottom:1px solid var(--border);padding:7px 11px;font-size:10px;font-weight:bold;color:var(--mu);text-transform:uppercase;letter-spacing:.6px}
+.doc-row{padding:6px 10px 6px 13px;border-bottom:1px solid #f0f2f5;cursor:pointer;display:flex;align-items:flex-start;gap:6px;font-size:12px;color:var(--tx)}
+.doc-row:hover{background:var(--bl2)}
+.doc-row.act{background:var(--bl2);border-left:2px solid var(--bm);padding-left:11px}
+.doc-row i{font-size:14px;color:var(--mu);margin-top:1px;flex-shrink:0}
+.doc-row.act i{color:var(--bm)}
+.doc-label{line-height:1.3}
+.doc-sub{font-size:10px;color:var(--mu)}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+
+/* PANEL HEADER */
+.pnl-hdr{background:var(--wh);border-bottom:1px solid var(--border);padding:9px 15px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.pnl-title{font-size:13px;font-weight:bold;color:var(--bl);display:flex;align-items:center;gap:7px}
+.pnl-title i{font-size:16px}
+.pnl-sub{font-size:11px;color:var(--mu);margin-top:2px}
+
+/* TABS */
+.tab-row{display:flex;border-bottom:1px solid var(--border);background:#f7f8fa;flex-shrink:0}
+.tab{padding:7px 13px;font-size:11px;cursor:pointer;color:var(--mu);border-bottom:2px solid transparent;display:flex;align-items:center;gap:5px}
+.tab:hover{color:var(--bm)}
+.tab.act{color:var(--bm);border-bottom-color:var(--bm);font-weight:bold;background:var(--wh)}
+.tab i{font-size:13px}
+
+/* SCROLL AREA */
+.scroll{flex:1;overflow-y:auto}
+
+/* CHECKLIST CONTENT */
+.cl-body{padding:11px 15px;display:flex;flex-direction:column;gap:8px}
+
+/* GLOBAL PROGRESS */
+.gp-bar{background:var(--wh);border:1px solid var(--border);border-radius:2px;padding:9px 13px;display:flex;align-items:center;gap:11px;flex-shrink:0}
+.gp-lbl{font-size:11px;color:var(--mu);white-space:nowrap}
+.gp-track{flex:1;height:6px;background:#e4e8ee;border-radius:3px;overflow:hidden}
+.gp-fill{height:100%;background:var(--bm);border-radius:3px;transition:width .4s}
+.gp-pct{font-size:12px;font-weight:bold;color:var(--bm);min-width:32px;text-align:right}
+
+/* BADGES */
+.bdg{font-size:10px;padding:2px 7px;border-radius:2px;font-weight:bold;white-space:nowrap;display:inline-flex;align-items:center;gap:3px}
+.bdg-ok{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-bd)}
+.bdg-wa{background:var(--wa-bg);color:var(--wa);border:1px solid var(--wa-bd)}
+.bdg-gy{background:#f0f2f5;color:var(--mu);border:1px solid var(--border)}
+.bdg-bl{background:var(--inf-bg);color:var(--inf);border:1px solid var(--inf-bd)}
+.bdg-er{background:var(--er-bg);color:var(--er);border:1px solid var(--er-bd)}
+
+/* RIGHT SIDEBAR — stages nav */
+.rsb{width:230px;background:var(--wh);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.rsb-hd{background:#f7f8fa;border-bottom:1px solid var(--border);padding:7px 11px;font-size:10px;font-weight:bold;color:var(--mu);text-transform:uppercase;letter-spacing:.6px}
+.stage-row{padding:8px 10px;border-bottom:1px solid #f0f2f5;cursor:pointer;font-size:12px}
+.stage-row:hover{background:var(--bl2)}
+.stage-row.act{background:var(--bl2)}
+.stage-row-top{display:flex;align-items:center;gap:7px;margin-bottom:4px}
+.stage-num{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:bold;color:var(--mu);flex-shrink:0}
+.stage-num.done{background:var(--ok-bg);border-color:var(--ok-bd);color:var(--ok)}
+.stage-num.curr{background:var(--inf-bg);border-color:var(--inf-bd);color:var(--inf)}
+.stage-name{font-weight:bold;color:var(--tx);flex:1;font-size:11px;line-height:1.3}
+.stage-dept{font-size:10px;color:var(--mu);margin-bottom:4px;padding-left:27px}
+.stage-pbar{margin-left:27px;height:3px;background:#e4e8ee;border-radius:2px;overflow:hidden}
+.stage-pfill{height:100%;background:var(--bm);border-radius:2px;transition:width .3s}
+.stage-pfill.done-f{background:var(--ok)}
+
+/* STAGE DETAIL */
+.stage-card{background:var(--wh);border:1px solid var(--border);border-radius:2px;padding:13px 15px}
+.stage-etapa{font-size:10px;font-weight:bold;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.stage-nome{font-size:18px;font-weight:bold;color:var(--tx);margin-bottom:2px}
+.stage-dpt{font-size:12px;color:var(--mu);margin-bottom:10px}
+.stage-desc{font-size:12px;color:var(--tx);line-height:1.5;padding-top:10px;border-top:1px solid var(--border);margin-top:8px}
+.stage-meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.meta-cell{}
+.meta-lbl{font-size:10px;color:var(--mu)}
+.meta-val{font-size:12px;font-weight:bold;color:var(--tx);margin-top:1px}
+
+/* MINI PROGRESS */
+.mini-prog{margin-top:10px;padding:8px 10px;background:#f7f8fa;border:1px solid var(--border);border-radius:2px}
+.mini-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:11px}
+.mini-lbl{color:var(--mu)}
+.mini-pct{font-weight:bold;color:var(--bm)}
+.mini-track{height:5px;background:#e4e8ee;border-radius:3px;overflow:hidden}
+.mini-fill{height:100%;background:var(--bm);border-radius:3px;transition:width .3s}
+
+/* RESPONSIBLE */
+.resp-card{background:#f7f8fa;border:1px solid var(--border);border-radius:2px;padding:10px 12px}
+.resp-hd{font-size:11px;font-weight:bold;color:var(--tx);margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.resp-hd i{font-size:14px;color:var(--mu)}
+.autocomplete-wrap{position:relative}
+.autocomplete-input{width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:2px;font-size:12px;font-family:Arial;background:var(--wh);color:var(--tx);outline:none}
+.autocomplete-input:focus{border-color:var(--bm)}
+.autocomplete-drop{position:absolute;top:100%;left:0;right:0;background:var(--wh);border:1px solid var(--border);border-radius:2px;z-index:100;max-height:160px;overflow-y:auto;display:none;box-shadow:0 3px 8px rgba(0,0,0,.12)}
+.autocomplete-drop.open{display:block}
+.ac-item{padding:6px 10px;cursor:pointer;font-size:12px;color:var(--tx)}
+.ac-item:hover{background:var(--bl2)}
+.ac-item-name{font-weight:bold}
+.ac-item-dept{font-size:10px;color:var(--mu)}
+.resp-selected{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:2px;font-size:12px}
+.resp-selected i{font-size:16px;color:var(--ok)}
+.resp-sel-name{font-weight:bold;color:var(--ok);flex:1}
+.resp-sel-email{font-size:10px;color:var(--ok)}
+.resp-clear{background:none;border:none;cursor:pointer;color:var(--mu);font-size:14px;padding:2px}
+.resp-clear:hover{color:var(--er)}
+
+/* SECTION DIVIDER */
+.sec-hd{font-size:11px;font-weight:bold;color:var(--tx);margin-bottom:5px;display:flex;align-items:center;gap:5px;padding-top:2px}
+.sec-hd i{font-size:14px}
+
+/* CHECKLIST ITEM */
+.cl-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:2px;background:var(--wh);transition:border-color .15s,background .15s}
+.cl-item.done{background:var(--ok-bg);border-color:var(--ok-bd)}
+.cl-item.err-limit{background:var(--er-bg);border-color:var(--er-bd)}
+.cl-chk{width:15px;height:15px;border-radius:2px;border:1px solid var(--border);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s}
+.cl-chk:hover{border-color:var(--bm)}
+.cl-chk.chkd{background:var(--ok);border-color:var(--ok)}
+.cl-chk.chkd i{color:#fff;font-size:10px}
+.cl-chk.disabled{opacity:.4;cursor:not-allowed}
+.cl-info{flex:1;min-width:0}
+.cl-title{font-size:12px;font-weight:bold;color:var(--tx);line-height:1.35}
+.cl-title.done{color:var(--ok);text-decoration:line-through}
+.cl-title .req{color:#c0392b;font-size:11px;margin-left:2px}
+.cl-desc{font-size:11px;color:var(--mu);margin-top:2px;line-height:1.4}
+.cl-limit{display:flex;align-items:center;gap:4px;font-size:10px;padding:3px 7px;border-radius:2px;margin-top:5px;width:fit-content}
+.cl-limit.ok-lim{background:var(--inf-bg);color:var(--inf);border:1px solid var(--inf-bd)}
+.cl-limit.err-lim{background:var(--er-bg);color:var(--er);border:1px solid var(--er-bd)}
+.cl-limit i{font-size:11px}
+.cl-done-icon{width:18px;height:18px;border-radius:50%;background:var(--ok);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.cl-done-icon i{font-size:11px;color:#fff}
+
+/* FILE AREA */
+.file-area{margin-top:6px;padding:6px 8px;border:1px solid var(--border);border-radius:2px;background:#fafbfc}
+.file-inner{display:flex;align-items:center;gap:8px}
+.file-name{flex:1;min-width:0;font-size:11px}
+.file-name-main{font-weight:bold;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-name-meta{font-size:10px;color:var(--mu)}
+.file-btn{background:none;border:1px solid var(--border);border-radius:2px;padding:3px 7px;font-size:10px;cursor:pointer;display:flex;align-items:center;gap:3px;color:var(--tx);white-space:nowrap}
+.file-btn:hover{background:var(--bl2);border-color:var(--bm);color:var(--bm)}
+.file-btn.danger:hover{background:var(--er-bg);border-color:var(--er-bd);color:var(--er)}
+.file-upload-btn{display:inline-flex;align-items:center;gap:4px;background:var(--bm);color:#fff;border:1px solid var(--bm);border-radius:2px;padding:3px 9px;font-size:11px;cursor:pointer;transition:background .15s}
+.file-upload-btn:hover{background:var(--bl)}
+.file-upload-btn i{font-size:12px}
+
+/* NAVIGATION */
+.nav-bar{background:var(--wh);border-top:1px solid var(--border);padding:8px 15px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.nav-btn{border:1px solid var(--border);background:var(--wh);border-radius:2px;padding:5px 12px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px;color:var(--tx)}
+.nav-btn:hover{background:var(--bl2);border-color:var(--bm);color:var(--bm)}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed}
+.nav-btn.primary{background:var(--bm);color:#fff;border-color:var(--bm)}
+.nav-btn.primary:hover{background:var(--bl)}
+.nav-btn.primary:disabled{background:var(--mu);border-color:var(--mu);opacity:.6}
+.nav-btn.success{background:var(--ok);color:#fff;border-color:var(--ok)}
+.nav-info{font-size:11px;color:var(--mu)}
+.nav-btn i{font-size:13px}
+
+/* EXPORT ROW */
+.act-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.act-btn{border:1px solid var(--border);background:var(--wh);border-radius:2px;padding:4px 10px;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:4px;color:var(--tx)}
+.act-btn:hover{background:var(--bl2);border-color:var(--bm);color:var(--bm)}
+.act-btn.danger:hover{background:var(--er-bg);border-color:var(--er-bd);color:var(--er)}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:#222;color:#fff;padding:9px 16px;border-radius:3px;font-size:12px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;max-width:300px}
+.toast.show{opacity:1}
+.toast.ok{background:var(--ok)}
+.toast.err{background:#c0392b}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:none;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--wh);border:1px solid var(--border);border-radius:3px;padding:20px;width:420px;max-width:90vw}
+.modal-title{font-size:14px;font-weight:bold;color:var(--tx);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.modal-title i{font-size:18px;color:var(--bm)}
+.modal-txt{font-size:12px;color:var(--tx);line-height:1.6;margin-bottom:16px}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end}
+.modal-btn{border:1px solid var(--border);background:var(--wh);border-radius:2px;padding:5px 14px;font-size:12px;cursor:pointer;color:var(--tx)}
+.modal-btn:hover{background:#f0f2f5}
+.modal-btn.primary{background:var(--bm);color:#fff;border-color:var(--bm)}
+.modal-btn.primary:hover{background:var(--bl)}
+.modal-btn.danger{background:#c0392b;color:#fff;border-color:#c0392b}
+.modal-btn.danger:hover{background:#a93226}
+
+/* COMPLETED BANNER */
+.done-banner{background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:2px;padding:10px 14px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--ok);font-weight:bold}
+.done-banner i{font-size:20px}
+
+/* HIDDEN */
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div style="display:flex;align-items:center;gap:8px">
+    <span class="hdr-badge">SEI</span>
+    <span class="hdr-title">Sistema Eletrônico de Informações</span>
+  </div>
+  <div class="hdr-right">
+    <span>IFPE — Reitoria</span>
+    <div class="hdr-user"><i class="ti ti-user-circle"></i> João Silva</div>
+  </div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <span class="proc-num">23197.000842/2025-13</span>
+  <div class="sep"></div>
+  <span class="proc-type">Pagamento: Prestação de Serviços</span>
+  <div class="sep"></div>
+  <button class="tb-btn"><i class="ti ti-pencil"></i> Ações</button>
+  <button class="tb-btn"><i class="ti ti-paperclip"></i> Incluir Doc.</button>
+  <button class="tb-btn act"><i class="ti ti-checklist"></i> Checklist</button>
+  <div style="display:flex;gap:5px;margin-left:auto">
+    <button class="tb-btn" onclick="exportarJSON()"><i class="ti ti-download"></i> Exportar</button>
+    <button class="tb-btn" onclick="confirmarReset()"><i class="ti ti-refresh"></i> Resetar</button>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- LEFT — doc tree -->
+  <div class="lsb">
+    <div class="lsb-hd">Documentos do Processo</div>
+    <div class="doc-row"><i class="ti ti-file-description"></i><div class="doc-label">Ofício n.º 014/2025<div class="doc-sub">Abertura do processo</div></div></div>
+    <div class="doc-row"><i class="ti ti-file-spreadsheet"></i><div class="doc-label">Nota de Empenho<div class="doc-sub">NE 2025NE000124</div></div></div>
+    <div class="doc-row"><i class="ti ti-file-check"></i><div class="doc-label">Nota Fiscal<div class="doc-sub">NF-e 000.592</div></div></div>
+    <div class="doc-row"><i class="ti ti-file-text"></i><div class="doc-label">Atesto de Recebimento<div class="doc-sub">29/04/2025</div></div></div>
+    <div class="doc-row act"><i class="ti ti-checklist"></i><div class="doc-label">Checklist de Pagamento<div class="doc-sub">Em andamento</div></div></div>
+    <div class="doc-row"><i class="ti ti-file-invoice"></i><div class="doc-label">Ordem Bancária<div class="doc-sub">Pendente</div></div></div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="pnl-hdr">
+      <div>
+        <div class="pnl-title"><i class="ti ti-checklist"></i> Checklist de Pagamento — IFPE</div>
+        <div class="pnl-sub">Prestação de Serviços · Empresa XYZ Ltda. · Processo 23197.000842/2025-13</div>
+      </div>
+      <div id="global-badge" class="bdg bdg-wa"><i class="ti ti-clock" style="font-size:10px"></i> Em andamento</div>
+    </div>
+
+    <div class="tab-row">
+      <div class="tab act" id="tab-cl" onclick="switchTab('cl')"><i class="ti ti-list-check"></i> Checklist por Etapa</div>
+      <div class="tab" id="tab-hist" onclick="switchTab('hist')"><i class="ti ti-timeline"></i> Histórico</div>
+      <div class="tab" id="tab-info" onclick="switchTab('info')"><i class="ti ti-info-circle"></i> Informações do Processo</div>
+    </div>
+
+    <div class="scroll">
+
+      <!-- TAB: CHECKLIST -->
+      <div id="pane-cl" class="cl-body">
+
+        <div class="gp-bar">
+          <span class="gp-lbl">Progresso geral do processo</span>
+          <div class="gp-track"><div class="gp-fill" id="gp-fill" style="width:0%"></div></div>
+          <span class="gp-pct" id="gp-pct">0%</span>
+          <span class="bdg bdg-bl" id="gp-count">0 de 0 itens</span>
+        </div>
+
+        <!-- STAGE DETAIL — rendered by JS -->
+        <div id="stage-detail"></div>
+
+      </div>
+
+      <!-- TAB: HISTORY -->
+      <div id="pane-hist" class="cl-body hidden">
+        <div style="background:var(--wh);border:1px solid var(--border);border-radius:2px;padding:20px;text-align:center;color:var(--mu);font-size:12px">
+          <i class="ti ti-timeline" style="font-size:32px;display:block;margin-bottom:8px;opacity:.4"></i>
+          O histórico de tramitações aparecerá aqui conforme as etapas forem sendo concluídas.
+        </div>
+        <div id="hist-list" style="display:flex;flex-direction:column;gap:7px"></div>
+      </div>
+
+      <!-- TAB: INFO -->
+      <div id="pane-info" class="cl-body hidden">
+        <div class="stage-card">
+          <div style="font-size:13px;font-weight:bold;color:var(--tx);margin-bottom:12px">Informações do Processo</div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse">
+            <tr><td style="padding:6px 0;color:var(--mu);width:160px">Número do Processo</td><td style="font-weight:bold;color:var(--tx)">23197.000842/2025-13</td></tr>
+            <tr style="border-top:1px solid #f0f2f5"><td style="padding:6px 0;color:var(--mu)">Identificador da Ação</td><td><input type="text" placeholder="Ex: Ação-001" style="width:100%;padding:5px 7px;border:1px solid var(--border);border-radius:2px;font-size:12px" /></td></tr>
+            <tr style="border-top:1px solid #f0f2f5"><td style="padding:6px 0;color:var(--mu)">Título da Ação</td><td><input type="text" placeholder="Ex: Pagamento de Prestação de Serviços" style="width:100%;padding:5px 7px;border:1px solid var(--border);border-radius:2px;font-size:12px" /></td></tr>
+            <tr style="border-top:1px solid #f0f2f5"><td style="padding:6px 0;color:var(--mu)">Tipo de Processo</td><td>Pagamento: Prestação de Serviços</td></tr>
+            <tr style="border-top:1px solid #f0f2f5"><td style="padding:6px 0;color:var(--mu)">Fornecedor</td><td>Empresa XYZ Ltda. (CNPJ 00.000.000/0001-00)</td></tr>
+            <tr style="border-top:1px solid #f0f2f5"><td style="padding:6px 0;color:var(--mu)">Valor Total</td><td><strong>R$ 12.450,00</strong></td></tr>
+            <tr style="border-top:1px solid #f0f2f5"><td style="padding:6px 0;color:var(--mu)">Unidade Gestora</td><td>IFPE — Reitoria</td></tr>
+            <tr style="border-top:1px solid #f0f2f5"><td style="padding:6px 0;color:var(--mu)">Abertura</td><td>02/05/2025</td></tr>
+            <tr style="border-top:1px solid #f0f2f5"><td style="padding:6px 0;color:var(--mu)">Última atualização</td><td id="info-last-update">—</td></tr>
+            <tr style="border-top:1px solid #f0f2f5"><td style="padding:6px 0;color:var(--mu)">Base legal</td><td>Lei 14.133/2021 — Nova Lei de Licitações</td></tr>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /scroll -->
+
+    <!-- NAV BAR -->
+    <div class="nav-bar">
+      <button class="nav-btn" id="btn-prev" onclick="navStage(-1)" disabled><i class="ti ti-chevron-left"></i> Etapa Anterior</button>
+      <span class="nav-info" id="nav-info">Etapa 1 de 6</span>
+      <button class="nav-btn primary" id="btn-next" onclick="navStage(1)">Próxima Etapa <i class="ti ti-chevron-right"></i></button>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDEBAR — stages -->
+  <div class="rsb">
+    <div class="rsb-hd">Etapas do Processo</div>
+    <div id="stage-nav"></div>
+  </div>
+
+</div><!-- /body -->
+</div><!-- /shell -->
+
+<!-- MODAL CONFIRM -->
+<div class="modal-bg" id="modal-reset">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-alert-triangle"></i> Confirmar Reset</div>
+    <div class="modal-txt">Todos os dados preenchidos serão perdidos. Esta ação não pode ser desfeita. Deseja continuar?</div>
+    <div class="modal-btns">
+      <button class="modal-btn" onclick="closeModal()">Cancelar</button>
+      <button class="modal-btn danger" onclick="doReset()"><i class="ti ti-trash" style="font-size:12px;margin-right:3px"></i> Resetar tudo</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+var pessoas = [
+  {id:"p-001",nome:"João Silva",email:"joao.silva@ifpe.edu.br",departamento:"Departamento Solicitante"},
+  {id:"p-002",nome:"Maria Santos",email:"maria.santos@ifpe.edu.br",departamento:"Departamento Solicitante"},
+  {id:"p-003",nome:"Carlos Oliveira",email:"carlos.oliveira@ifpe.edu.br",departamento:"Financeiro"},
+  {id:"p-004",nome:"Ana Costa",email:"ana.costa@ifpe.edu.br",departamento:"Financeiro"},
+  {id:"p-005",nome:"Pedro Ferreira",email:"pedro.ferreira@ifpe.edu.br",departamento:"Fiscalização"},
+  {id:"p-006",nome:"Juliana Martins",email:"juliana.martins@ifpe.edu.br",departamento:"Fiscalização"},
+  {id:"p-007",nome:"Roberto Gomes",email:"roberto.gomes@ifpe.edu.br",departamento:"Gestão"},
+  {id:"p-008",nome:"Fernanda Lima",email:"fernanda.lima@ifpe.edu.br",departamento:"Gestão"},
+  {id:"p-009",nome:"Lucas Alves",email:"lucas.alves@ifpe.edu.br",departamento:"Instituição Financeira"},
+  {id:"p-010",nome:"Patricia Rocha",email:"patricia.rocha@ifpe.edu.br",departamento:"Instituição Financeira"}
+];
+
+var initialStages = [
+  {id:"s1",nome:"Requisição de Serviço",ordem:1,actor:"Requisitante",departamento:"Departamento Solicitante",sla:"Sem limite",descricao:"Etapa inicial onde o requisitante submete a solicitação de serviço com toda documentação básica necessária.",
+    docs:[
+      {id:"d1-1",titulo:"Formulário de Requisição de Serviço",desc:"Preenchimento completo com dados do serviço",obrig:true},
+      {id:"d1-2",titulo:"Especificação Técnica",desc:"Detalhamento do serviço solicitado",obrig:true},
+      {id:"d1-3",titulo:"Orçamento Prévio",desc:"Estimativa de custos (se aplicável)",obrig:false}
+    ],
+    vers:[
+      {id:"v1-1",titulo:"Verificar Conformidade da Requisição",desc:"Validar se a requisição atende aos requisitos básicos",obrig:true}
+    ]
+  },
+  {id:"s2",nome:"Análise de Conformidade",ordem:2,actor:"Setor Orçamentário",departamento:"Setor de Orçamento",sla:"5 dias úteis",descricao:"Análise de conformidade e verificação de disponibilidade orçamentária junto ao Financeiro.",
+    docs:[
+      {id:"d2-1",titulo:"Parecer Orçamentário",desc:"Análise de disponibilidade orçamentária",obrig:true}
+    ],
+    vers:[
+      {id:"v2-1",titulo:"Verificar Disponibilidade Orçamentária",desc:"Confirmar se há recursos disponíveis",obrig:true},
+      {id:"v2-2",titulo:"Validar Conformidade com Lei 14.133/2021",desc:"Verificar adequação à nova lei de licitações",obrig:true,corrLimit:2,corrUsed:0}
+    ]
+  },
+  {id:"s3",nome:"Verificação de Documentação",ordem:3,actor:"Fiscal Administrativo",departamento:"Setor de Fiscalização",sla:"3 dias úteis",descricao:"Verificação de documentos e certidões de regularidade fiscal, trabalhista e tributária do fornecedor.",
+    docs:[
+      {id:"d3-1",titulo:"Certidão de Regularidade Fiscal",desc:"Comprovante de regularidade junto à Receita Federal",obrig:true},
+      {id:"d3-2",titulo:"Certidão de Débitos Trabalhistas (CNDT)",desc:"Comprovante junto ao FGTS",obrig:true},
+      {id:"d3-3",titulo:"Inscrição Estadual",desc:"Comprovante de inscrição estadual",obrig:false}
+    ],
+    vers:[
+      {id:"v3-1",titulo:"Verificar Documentação do Fornecedor",desc:"Validar todas as certidões e documentos",obrig:true,corrLimit:1,corrUsed:0}
+    ]
+  },
+  {id:"s4",nome:"Aprovação do Gestor",ordem:4,actor:"Gestor Responsável",departamento:"Gestão de Contratos",sla:"2 dias úteis",descricao:"Aprovação final do gestor responsável pelo contrato antes da emissão do empenho.",
+    docs:[
+      {id:"d4-1",titulo:"Parecer de Aprovação",desc:"Documento de aprovação final do gestor",obrig:true},
+      {id:"d4-2",titulo:"Termo de Contrato",desc:"Contrato ou acordo com o fornecedor",obrig:false}
+    ],
+    vers:[
+      {id:"v4-1",titulo:"Verificar Conformidade Final",desc:"Validação final antes da emissão de empenho",obrig:true}
+    ]
+  },
+  {id:"s5",nome:"Emissão de Empenho",ordem:5,actor:"Fiscal Administrativo",departamento:"Setor Financeiro",sla:"1 dia útil",descricao:"Emissão da nota de empenho e processamento da despesa no SIAFI.",
+    docs:[
+      {id:"d5-1",titulo:"Nota de Empenho",desc:"Documento de empenho da despesa no SIAFI",obrig:true},
+      {id:"d5-2",titulo:"Comprovante de Processamento SIAFI",desc:"Confirmação de processamento do empenho",obrig:false}
+    ],
+    vers:[
+      {id:"v5-1",titulo:"Verificar Conformidade de Impostos",desc:"Validar se há impostos em atraso ou pendências fiscais",obrig:true}
+    ]
+  },
+  {id:"s6",nome:"Processamento Bancário",ordem:6,actor:"Banco",departamento:"Instituição Financeira",sla:"2 dias úteis",descricao:"Processamento final do pagamento pela instituição financeira com emissão do comprovante de transferência.",
+    docs:[
+      {id:"d6-1",titulo:"Comprovante de Transferência",desc:"Recibo de transferência bancária",obrig:true},
+      {id:"d6-2",titulo:"Extrato Bancário",desc:"Extrato comprovando a transação",obrig:false}
+    ],
+    vers:[
+      {id:"v6-1",titulo:"Confirmar Pagamento Realizado",desc:"Verificar se o pagamento foi processado com sucesso",obrig:true}
+    ]
+  }
+];
+
+// ============================================================
+// STATE
+// ============================================================
+var state = {
+  activeIdx: 0,
+  completedIds: [],
+  stages: JSON.parse(JSON.stringify(initialStages)).map(function(s){
+    s.docs = s.docs.map(function(d){return Object.assign({},d,{done:false,file:null})});
+    s.vers = s.vers.map(function(v){return Object.assign({},v,{done:false})});
+    s.responsavel = null;
+    return s;
+  }),
+  history: []
+};
+
+// ============================================================
+// HELPERS
+// ============================================================
+function stageProgress(s){
+  var items=[].concat(s.docs,s.vers);
+  if(!items.length) return 0;
+  var done=items.filter(function(i){return i.done}).length;
+  return Math.round(done/items.length*100);
+}
+function stageComplete(s){
+  var req=[].concat(
+    s.docs.filter(function(d){return d.obrig}),
+    s.vers.filter(function(v){return v.obrig})
+  );
+  return req.every(function(i){return i.done});
+}
+function globalProgress(){
+  var total=0,done=0;
+  state.stages.forEach(function(s){
+    [].concat(s.docs,s.vers).forEach(function(i){total++;if(i.done)done++});
+  });
+  return total?Math.round(done/total*100):0;
+}
+function globalCounts(){
+  var total=0,done=0;
+  state.stages.forEach(function(s){
+    [].concat(s.docs,s.vers).forEach(function(i){total++;if(i.done)done++});
+  });
+  return {total:total,done:done};
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+var toastTimer=null;
+function toast(msg,type){
+  var el=document.getElementById('toast');
+  el.textContent=msg;
+  el.className='toast show '+(type||'');
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){el.className='toast'},2800);
+}
+
+// ============================================================
+// RENDER STAGE NAV (right sidebar)
+// ============================================================
+function renderNav(){
+  var s=state.stages,html='';
+  s.forEach(function(st,i){
+    var prog=stageProgress(st);
+    var done=state.completedIds.indexOf(st.id)>-1;
+    var curr=i===state.activeIdx;
+    var numCls='stage-num'+(done?' done':curr?' curr':'');
+    var fillCls='stage-pfill'+(done?' done-f':'');
+    var numInner=done?'<i class="ti ti-check" style="font-size:10px"></i>':st.ordem;
+    html+='<div class="stage-row'+(curr?' act':'')+'" onclick="goStage('+i+')">'
+      +'<div class="stage-row-top">'
+        +'<div class="'+numCls+'">'+numInner+'</div>'
+        +'<div class="stage-name">'+st.nome+'</div>'
+        +(done?'<i class="ti ti-circle-check" style="font-size:14px;color:var(--ok);flex-shrink:0"></i>':'')
+      +'</div>'
+      +'<div class="stage-dept">'+st.departamento+'</div>'
+      +'<div class="stage-pbar"><div class="'+fillCls+'" style="width:'+prog+'%"></div></div>'
+    +'</div>';
+  });
+  document.getElementById('stage-nav').innerHTML=html;
+}
+
+// ============================================================
+// RENDER STAGE DETAIL (main panel)
+// ============================================================
+function renderDetail(){
+  var s=state.stages[state.activeIdx];
+  var done=stageComplete(s);
+  var prog=stageProgress(s);
+  var completed=state.completedIds.indexOf(s.id)>-1;
+
+  var statusBdg=done
+    ?'<span class="bdg bdg-ok"><i class="ti ti-circle-check" style="font-size:10px"></i> Completo</span>'
+    :'<span class="bdg bdg-wa"><i class="ti ti-clock" style="font-size:10px"></i> Em andamento</span>';
+
+  var html='';
+
+  // completed banner
+  if(completed){
+    html+='<div class="done-banner"><i class="ti ti-circle-check"></i> Esta etapa foi concluída e o processo avançou.</div>';
+  }
+
+  // stage info card
+  html+='<div class="stage-card">'
+    +'<div class="stage-etapa">ETAPA '+s.ordem+' &nbsp;'+statusBdg+'</div>'
+    +'<div class="stage-nome">'+s.nome+'</div>'
+    +'<div class="stage-dpt">'+s.departamento+'</div>'
+    +'<div class="stage-desc">'+s.descricao+'</div>'
+    +'<div class="stage-meta">'
+      +'<div class="meta-cell"><div class="meta-lbl">Responsável</div><div class="meta-val">'+s.actor+'</div></div>'
+      +'<div class="meta-cell"><div class="meta-lbl">SLA</div><div class="meta-val">'+s.sla+'</div></div>'
+      +'<div class="meta-cell"><div class="meta-lbl">Progresso</div><div class="meta-val">'+prog+'%</div></div>'
+    +'</div>'
+    +'<div class="mini-prog">'
+      +'<div class="mini-top"><span class="mini-lbl">Progresso desta Etapa</span><span class="mini-pct">'+prog+'%</span></div>'
+      +'<div class="mini-track"><div class="mini-fill" style="width:'+prog+'%"></div></div>'
+    +'</div>'
+  +'</div>';
+
+  // responsible
+  html+=renderResponsavel(s);
+
+  // documents
+  var obrigDocs=s.docs.filter(function(d){return d.obrig});
+  var optDocs=s.docs.filter(function(d){return !d.obrig});
+  if(obrigDocs.length){
+    html+='<div class="sec-hd"><i class="ti ti-alert-circle" style="color:var(--er)"></i> Documentos Obrigatórios</div>';
+    obrigDocs.forEach(function(d){html+=renderDoc(s.id,d)});
+  }
+  if(optDocs.length){
+    html+='<div class="sec-hd" style="margin-top:4px"><i class="ti ti-file-plus" style="color:var(--mu)"></i> Documentos Opcionais</div>';
+    optDocs.forEach(function(d){html+=renderDoc(s.id,d)});
+  }
+
+  // verifications
+  if(s.vers.length){
+    html+='<div class="sec-hd" style="margin-top:4px"><i class="ti ti-clipboard-check" style="color:var(--bm)"></i> Verificações</div>';
+    s.vers.forEach(function(v){html+=renderVer(s.id,v)});
+  }
+
+  // action row
+  if(!completed){
+    html+='<div class="act-row">';
+    if(done){
+      var isLast=state.activeIdx===state.stages.length-1;
+      if(isLast){
+        html+='<button class="act-btn" style="background:var(--ok);color:#fff;border-color:var(--ok)" onclick="concluirProcesso()"><i class="ti ti-check-circle" style="font-size:12px"></i> Concluir Processo</button>';
+      } else {
+        html+='<button class="act-btn" style="background:var(--ok);color:#fff;border-color:var(--ok)" onclick="navStage(1)"><i class="ti ti-arrow-right" style="font-size:12px"></i> Avançar para próxima etapa</button>';
+      }
+    }
+    html+='<button class="act-btn" onclick="addObservacao()"><i class="ti ti-notes" style="font-size:12px"></i> Adicionar Observação</button>';
+    html+='</div>';
+  }
+
+  document.getElementById('stage-detail').innerHTML=html;
+  initAutocomplete(s);
+}
+
+function renderDoc(sid,d){
+  var itemCls='cl-item'+(d.done?' done':'');
+  var chkCls='cl-chk'+(d.done?' chkd':'');
+  var chkIcon=d.done?'<i class="ti ti-check"></i>':'';
+  var titleCls='cl-title'+(d.done?' done':'');
+  var req=d.obrig?'<span class="req">*</span>':'';
+  var doneIcon=d.done?'<div class="cl-done-icon"><i class="ti ti-check"></i></div>':'';
+
+  var fileHtml='';
+  if(d.file){
+    var kb=(d.file.size/1024).toFixed(2);
+    fileHtml='<div class="file-area"><div class="file-inner">'
+      +'<i class="ti ti-paperclip" style="font-size:14px;color:var(--bm);flex-shrink:0"></i>'
+      +'<div class="file-name"><div class="file-name-main">'+d.file.name+'</div><div class="file-name-meta">'+kb+' KB</div></div>'
+      +'<button class="file-btn" onclick="downloadFile(\''+sid+'\',\''+d.id+'\')"><i class="ti ti-download" style="font-size:11px"></i> Baixar</button>'
+      +'<button class="file-btn danger" onclick="removeFile(\''+sid+'\',\''+d.id+'\')"><i class="ti ti-trash" style="font-size:11px"></i> Remover</button>'
+    +'</div></div>';
+  } else {
+    fileHtml='<div style="margin-top:5px">'
+      +'<label class="file-upload-btn">'
+      +'<i class="ti ti-upload"></i> Anexar arquivo'
+      +'<input type="file" style="display:none" onchange="attachFile(\''+sid+'\',\''+d.id+'\',this)">'
+      +'</label></div>';
+  }
+
+  return '<div class="'+itemCls+'">'
+    +'<div class="'+chkCls+'" onclick="toggleDoc(\''+sid+'\',\''+d.id+'\')">'+chkIcon+'</div>'
+    +'<div class="cl-info">'
+      +'<div class="'+titleCls+'">'+d.titulo+req+'</div>'
+      +'<div class="cl-desc">'+d.desc+'</div>'
+      +fileHtml
+    +'</div>'
+    +doneIcon
+  +'</div>';
+}
+
+function renderVer(sid,v){
+  var errLimit=v.corrLimit!==undefined&&(v.corrLimit-v.corrUsed)<=0;
+  var itemCls='cl-item'+(v.done?' done':'')+(errLimit?' err-limit':'');
+  var chkCls='cl-chk'+(v.done?' chkd':'')+(errLimit?' disabled':'');
+  var chkClick=errLimit?'':'onclick="toggleVer(\''+sid+'\',\''+v.id+'\')"';
+  var chkIcon=v.done?'<i class="ti ti-check"></i>':'';
+  var titleCls='cl-title'+(v.done?' done':'');
+  var req=v.obrig?'<span class="req">*</span>':'';
+  var doneIcon=v.done?'<div class="cl-done-icon"><i class="ti ti-check"></i></div>':'';
+
+  var limitHtml='';
+  if(v.corrLimit!==undefined){
+    var rem=v.corrLimit-v.corrUsed;
+    if(errLimit){
+      limitHtml='<div class="cl-limit err-lim"><i class="ti ti-alert-circle"></i> Limite de correções atingido</div>';
+    } else {
+      limitHtml='<div class="cl-limit ok-lim"><i class="ti ti-info-circle"></i> '+rem+' correção(ões) restante(s) de '+v.corrLimit+'</div>';
+    }
+  }
+
+  return '<div class="'+itemCls+'">'
+    +'<div class="'+chkCls+'" '+chkClick+'>'+chkIcon+'</div>'
+    +'<div class="cl-info">'
+      +'<div class="'+titleCls+'">'+v.titulo+req+'</div>'
+      +'<div class="cl-desc">'+v.desc+'</div>'
+      +limitHtml
+    +'</div>'
+    +doneIcon
+  +'</div>';
+}
+
+function renderResponsavel(s){
+  var html='<div class="resp-card">'
+    +'<div class="resp-hd"><i class="ti ti-user"></i> Responsável pela Etapa</div>';
+  if(s.responsavel){
+    html+='<div class="resp-selected">'
+      +'<i class="ti ti-user-check"></i>'
+      +'<div style="flex:1"><div class="resp-sel-name">'+s.responsavel.nome+'</div>'
+      +'<div class="resp-sel-email">'+s.responsavel.email+' &middot; '+s.responsavel.departamento+'</div></div>'
+      +'<button class="resp-clear" onclick="clearResp(\''+s.id+'\')" title="Remover responsável"><i class="ti ti-x" style="font-size:13px"></i></button>'
+    +'</div>';
+  } else {
+    html+='<div class="autocomplete-wrap" id="ac-wrap-'+s.id+'">'
+      +'<input class="autocomplete-input" id="ac-input-'+s.id+'" placeholder="Buscar responsável por nome, e-mail ou departamento..." oninput="acSearch(\''+s.id+'\',this.value)" onfocus="acOpen(\''+s.id+'\')">'
+      +'<div class="autocomplete-drop" id="ac-drop-'+s.id+'"></div>'
+    +'</div>';
+  }
+  html+='</div>';
+  return html;
+}
+
+// ============================================================
+// AUTOCOMPLETE
+// ============================================================
+function initAutocomplete(s){
+  if(s.responsavel) return;
+  var inp=document.getElementById('ac-input-'+s.id);
+  if(!inp) return;
+  document.addEventListener('click',function handler(e){
+    var wrap=document.getElementById('ac-wrap-'+s.id);
+    if(wrap&&!wrap.contains(e.target)){
+      var drop=document.getElementById('ac-drop-'+s.id);
+      if(drop) drop.classList.remove('open');
+    }
+  },{once:false});
+}
+function acSearch(sid,val){
+  var drop=document.getElementById('ac-drop-'+sid);
+  if(!drop) return;
+  var res=val.trim()?pessoas.filter(function(p){
+    var t=val.toLowerCase();
+    return p.nome.toLowerCase().includes(t)||p.email.toLowerCase().includes(t)||p.departamento.toLowerCase().includes(t);
+  }):pessoas;
+  drop.innerHTML=res.map(function(p){
+    return '<div class="ac-item" onclick="selectResp(\''+sid+'\',\''+p.id+'\')">'
+      +'<div class="ac-item-name">'+p.nome+'</div>'
+      +'<div class="ac-item-dept">'+p.email+' &middot; '+p.departamento+'</div>'
+    +'</div>';
+  }).join('');
+  drop.classList.add('open');
+}
+function acOpen(sid){
+  acSearch(sid,'');
+}
+function selectResp(sid,pid){
+  var p=pessoas.find(function(x){return x.id===pid});
+  if(!p) return;
+  var s=state.stages.find(function(x){return x.id===sid});
+  if(!s) return;
+  s.responsavel=p;
+  toast(p.nome+' atribuído(a) como responsável','ok');
+  renderAll();
+}
+function clearResp(sid){
+  var s=state.stages.find(function(x){return x.id===sid});
+  if(s) s.responsavel=null;
+  renderAll();
+}
+
+// ============================================================
+// TOGGLE ITEMS
+// ============================================================
+function toggleDoc(sid,did){
+  var s=state.stages.find(function(x){return x.id===sid});
+  if(!s) return;
+  var d=s.docs.find(function(x){return x.id===did});
+  if(!d) return;
+  d.done=!d.done;
+  updateLastUpdate();
+  renderAll();
+}
+function toggleVer(sid,vid){
+  var s=state.stages.find(function(x){return x.id===sid});
+  if(!s) return;
+  var v=s.vers.find(function(x){return x.id===vid});
+  if(!v||( v.corrLimit!==undefined&&(v.corrLimit-v.corrUsed)<=0)) return;
+  v.done=!v.done;
+  updateLastUpdate();
+  renderAll();
+}
+
+// ============================================================
+// FILE HANDLING
+// ============================================================
+function attachFile(sid,did,input){
+  var f=input.files[0];
+  if(!f) return;
+  var s=state.stages.find(function(x){return x.id===sid});
+  var d=s&&s.docs.find(function(x){return x.id===did});
+  if(!d) return;
+  d.file={name:f.name,size:f.size,type:f.type,data:null};
+  var reader=new FileReader();
+  reader.onload=function(e){d.file.data=e.target.result};
+  reader.readAsDataURL(f);
+  d.done=true;
+  toast('Arquivo "'+f.name+'" anexado com sucesso','ok');
+  updateLastUpdate();
+  renderAll();
+}
+function removeFile(sid,did){
+  var s=state.stages.find(function(x){return x.id===sid});
+  var d=s&&s.docs.find(function(x){return x.id===did});
+  if(!d) return;
+  d.file=null;
+  d.done=false;
+  toast('Arquivo removido','');
+  updateLastUpdate();
+  renderAll();
+}
+function downloadFile(sid,did){
+  var s=state.stages.find(function(x){return x.id===sid});
+  var d=s&&s.docs.find(function(x){return x.id===did});
+  if(!d||!d.file||!d.file.data) return;
+  var a=document.createElement('a');
+  a.href=d.file.data;
+  a.download=d.file.name;
+  a.click();
+  toast('Download iniciado','ok');
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function goStage(idx){
+  state.activeIdx=idx;
+  renderAll();
+}
+function navStage(dir){
+  var ni=state.activeIdx+dir;
+  if(ni<0||ni>=state.stages.length) return;
+  var cur=state.stages[state.activeIdx];
+  if(dir>0){
+    if(!stageComplete(cur)){
+      toast('Complete todos os itens obrigatórios antes de avançar','err');
+      return;
+    }
+    if(state.completedIds.indexOf(cur.id)===-1){
+      state.completedIds.push(cur.id);
+      state.history.push({stage:cur.nome,ts:new Date().toLocaleString('pt-BR')});
+    }
+    toast('Avançado para '+state.stages[ni].nome,'ok');
+  }
+  state.activeIdx=ni;
+  renderAll();
+}
+function concluirProcesso(){
+  var cur=state.stages[state.activeIdx];
+  if(!stageComplete(cur)){toast('Complete todos os itens obrigatórios','err');return}
+  if(state.completedIds.indexOf(cur.id)===-1){
+    state.completedIds.push(cur.id);
+    state.history.push({stage:cur.nome,ts:new Date().toLocaleString('pt-BR')});
+  }
+  toast('🎉 Processo concluído com sucesso!','ok');
+  renderAll();
+}
+function addObservacao(){toast('Funcionalidade de observações disponível na versão completa')}
+
+// ============================================================
+// GLOBAL UPDATE
+// ============================================================
+function renderAll(){
+  renderNav();
+  renderDetail();
+  updateGlobal();
+  updateNavBar();
+  renderHistory();
+}
+function updateGlobal(){
+  var g=globalProgress();
+  var c=globalCounts();
+  document.getElementById('gp-fill').style.width=g+'%';
+  document.getElementById('gp-pct').textContent=g+'%';
+  document.getElementById('gp-count').textContent=c.done+' de '+c.total+' itens';
+  var allDone=state.stages.every(function(s){return stageComplete(s)});
+  var bdg=document.getElementById('global-badge');
+  if(allDone){bdg.className='bdg bdg-ok';bdg.innerHTML='<i class="ti ti-circle-check" style="font-size:10px"></i> Concluído'}
+  else{bdg.className='bdg bdg-wa';bdg.innerHTML='<i class="ti ti-clock" style="font-size:10px"></i> Em andamento'}
+}
+function updateNavBar(){
+  var i=state.activeIdx,n=state.stages.length;
+  document.getElementById('nav-info').textContent='Etapa '+(i+1)+' de '+n;
+  document.getElementById('btn-prev').disabled=i===0;
+  var cur=state.stages[i];
+  var btnNext=document.getElementById('btn-next');
+  if(i===n-1){
+    btnNext.className='nav-btn success';
+    btnNext.innerHTML='<i class="ti ti-check-circle"></i> Concluir Processo';
+    btnNext.onclick=concluirProcesso;
+  } else {
+    btnNext.className='nav-btn primary';
+    btnNext.innerHTML='Próxima Etapa <i class="ti ti-chevron-right"></i>';
+    btnNext.onclick=function(){navStage(1)};
+  }
+  btnNext.disabled=!stageComplete(cur);
+}
+function renderHistory(){
+  var el=document.getElementById('hist-list');
+  if(!el) return;
+  var ph=document.querySelector('#pane-hist > div:first-child');
+  if(state.history.length){
+    if(ph) ph.style.display='none';
+    el.innerHTML=state.history.map(function(h,i){
+      return '<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--wh);border:1px solid var(--border);border-radius:2px">'
+        +'<div style="width:22px;height:22px;border-radius:50%;background:var(--ok-bg);border:1.5px solid var(--ok-bd);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px"><i class="ti ti-check" style="font-size:10px;color:var(--ok)"></i></div>'
+        +'<div><div style="font-size:12px;font-weight:bold;color:var(--tx)">Etapa concluída: '+h.stage+'</div>'
+        +'<div style="font-size:10px;color:var(--mu);margin-top:2px">'+h.ts+'</div></div>'
+      +'</div>';
+    }).join('');
+  } else {
+    if(ph) ph.style.display='';
+    el.innerHTML='';
+  }
+}
+function updateLastUpdate(){
+  var el=document.getElementById('info-last-update');
+  if(el) el.textContent=new Date().toLocaleString('pt-BR');
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function switchTab(t){
+  ['cl','hist','info'].forEach(function(id){
+    document.getElementById('tab-'+id).classList[id===t?'add':'remove']('act');
+    document.getElementById('pane-'+id).classList[id===t?'remove':'add']('hidden');
+  });
+}
+
+// ============================================================
+// EXPORT
+// ============================================================
+function exportarJSON(){
+  var data={
+    exportedAt:new Date().toISOString(),
+    processo:'23197.000842/2025-13',
+    progressoGeral:globalProgress()+'%',
+    etapas:state.stages.map(function(s){
+      return {
+        nome:s.nome,departamento:s.departamento,actor:s.actor,
+        progresso:stageProgress(s)+'%',
+        concluida:state.completedIds.indexOf(s.id)>-1,
+        responsavel:s.responsavel?{nome:s.responsavel.nome,email:s.responsavel.email}:null,
+        documentos:s.docs.map(function(d){return{titulo:d.titulo,obrigatorio:d.obrig,concluido:d.done,arquivo:d.file?d.file.name:null}}),
+        verificacoes:s.vers.map(function(v){return{titulo:v.titulo,obrigatorio:v.obrig,concluido:v.done}})
+      };
+    })
+  };
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='checklist-pagamento-'+(new Date().toISOString().split('T')[0])+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Arquivo JSON exportado com sucesso','ok');
+}
+
+// ============================================================
+// RESET
+// ============================================================
+function confirmarReset(){document.getElementById('modal-reset').classList.add('open')}
+function closeModal(){document.getElementById('modal-reset').classList.remove('open')}
+function doReset(){
+  state.activeIdx=0;
+  state.completedIds=[];
+  state.history=[];
+  state.stages=JSON.parse(JSON.stringify(initialStages)).map(function(s){
+    s.docs=s.docs.map(function(d){return Object.assign({},d,{done:false,file:null})});
+    s.vers=s.vers.map(function(v){return Object.assign({},v,{done:false})});
+    s.responsavel=null;
+    return s;
+  });
+  closeModal();
+  toast('Checklist resetado com sucesso');
+  renderAll();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderAll();
+</script>
+</body>
+</html>
